@@ -333,7 +333,6 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
         self.progress_bar.setValue(position)
 
     def musicCountDown(self):
-        '''отсчет времени от начала музыки'''
         self.time_mus += 1
         if self.time_mus >= self.length * 100:
             self.time_mus = 0
