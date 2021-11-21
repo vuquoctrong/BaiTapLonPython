@@ -1,0 +1,11 @@
+*.pyc
+*.pyo
+*pycache*
+.idea
+build
+dist
+docs/_build/
+__pycache__/
+*.py[cod]
+*$py.class
+*.ui
