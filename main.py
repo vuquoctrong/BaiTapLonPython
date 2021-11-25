@@ -12,6 +12,8 @@ import resources
 
 
 class Exx(QMainWindow, gui.Ui_MainWindow):
+    list_mp3 = []
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -234,7 +236,8 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
             self.initListFile(before_directory)
 
     def initListFile(self, value):
-        self.directory = value
+        self.list_mp3.extend(value)
+        self.directory = self.list_mp3
         if len(self.directory) > 1:
             self.button_next.setEnabled(True)
             self.button_prev.setEnabled(True)
