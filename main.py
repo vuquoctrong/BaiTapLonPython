@@ -27,17 +27,21 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
         self.mute_val = False
         self.state_playing = None
 
+    # cấu thình thông tin title app, icon app
     def initUI(self):
         self.setWindowTitle('AppMp3')
         self.setWindowIcon(QIcon(':/sourse/pass.jpg'))
         self.setAcceptDrops(True)
-        self.label_name_song.setWordWrap(True)
+        # self.label_name_song.setWordWrap(True)
         self.progress_bar.setMinimum(1)
 
+
+    # khởi tạo pygame để phát mp3
     def initPygame(self):
         pygame.init()
         pygame.mixer.init()
 
+    # sư kiện onclick button.
     def initButtonSignal(self):
         self.button_play.clicked.connect(self.playingEvent)
         self.button_stop.clicked.connect(self.stop)
@@ -49,7 +53,7 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
         self.button_stop.setEnabled(False)
         self.button_next.setEnabled(False)
         self.button_prev.setEnabled(False)
-
+    # set các image và kích thước icon button.
     def initButtonIcon(self):
         self.button_play.setIcon(QIcon(':/sourse/play.png'))
         self.button_play.setIconSize(QSize(30, 30))
@@ -62,14 +66,17 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
         self.button_prev.setIcon(QIcon(':/sourse/prev.png'))
         self.button_prev.setIconSize(QSize(25, 25))
 
+    # cấu hình UI thông số điều điển default
     def initLabel(self):
         self.label_pic_volume.labelClicked.connect(self.mute)
         self.label_vol_value.setText('50')
         self.setLabelTimeUp(0)
         self.label_total_time.setText(self.formatTime(0))
         self.setVolume()
-        self.label_name_song.setText('Ready to play music')
+        self.label_name_song.setText('Sẵn sàng phát nhạc ')
 
+
+    # cấu hình thông số progress bar và volume
     def slider_signal_init(self):
         self.progress_bar.sliderClicked.connect(
             lambda: self.setPlaybackPosition(
@@ -88,6 +95,8 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
 
+
+    # xử lý kéo thả file vào ứng dụng
     def dropEvent(self, event):
         if event.mimeData().hasUrls():
             value = [
@@ -95,7 +104,7 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
                 for url in event.mimeData().urls()
             ]
             self.initListFile(value)
-
+    # Khởi tạo file file nhạc
     def initMusic(self, value):
         self.button_play.setIcon(QIcon(':/sourse/pause.png'))
         self.name_song = value
@@ -105,21 +114,18 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
         except pygame.error as err:
             print(err)
             self.getAlbumCover()
-            self.label_name_song.setText('Unsupported format')
+            self.label_name_song.setText('Định đạng không hỗ trợ')
             if self.state_playing is not None:
                 self.stop()
             self.button_play.setEnabled(False)
             self.label_total_time.setText(self.formatTime(0))
         else:
-            self.setProgressBar()  # ползунок на начало
+            self.setProgressBar()
             self.setLabelTimeUp(0)
             self.getLength(self.name_song)
             self.getNameSong(self.name_song)
 
-            # громкость звука перед началом проигрывания
             self.setVolume()
-
-            # отображение обложки
             self.getAlbumCover(self.name_song)
 
             self.button_play.setEnabled(True)
@@ -141,6 +147,7 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
         except (KeyError, TypeError, MutagenError):
             self.launchAlbumCover()
         else:
+            # set ảnh bìa từ bài nhạc
             pixmap = QPixmap()
             pixmap.loadFromData(artwork.data)
             self.label_album_cover.setPixmap(
@@ -152,6 +159,8 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
                 )
             )
 
+
+    # set ảnh bìa mặc định
     def launchAlbumCover(self):
         self.label_album_cover.setPixmap(
             QPixmap(
@@ -227,14 +236,15 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
     def setLabelTimeUp(self, value):
         self.label_time_up.setText(self.formatTime(value))
 
+    # xử lý thêm file mp3 bằng click chọn file
     def browseFolder(self):
         before_directory = QFileDialog.getOpenFileNames(
             self, None, None, "*.mp3")[0]
 
-        # исключение диалогового окна без импортированных файлов
         if bool(before_directory) is True:
             self.initListFile(before_directory)
 
+    # thêm File nhạc vào ứng dựng
     def initListFile(self, value):
         self.list_mp3.extend(value)
         self.directory = self.list_mp3
@@ -248,7 +258,7 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
         self.getPositionTracklist()
         self.name_song = self.directory[0]
         self.initMusic(self.name_song)
-
+    # chuyển  bài kế tiếp
     def nextSong(self):
         try:
             self.name_song = self.directory[self.position_playlist + 1]
@@ -258,7 +268,7 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
             self.position_playlist += 1
             self.initMusic(self.name_song)
             self.getPositionTracklist()
-
+    # chuyển bài trước đó
     def prevSong(self):
         if self.state_playing == 'play' and self.time_mus // 100 > 5:
             self.initMusic(self.name_song)
@@ -273,10 +283,12 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
                 self.initMusic(self.name_song)
                 self.getPositionTracklist()
 
+    # cầu nhật UI hiển thị list bài nhạc
     def getPositionTracklist(self):
         self.label_tracklist_info.setText(
             f'{self.position_playlist+1} of {len(self.directory)}')
 
+    # cấu hình volume UI , thông số.
     def setVolume(self):
         volume = self.slider_volume.value()
         self.label_vol_value.setText(f'{volume}')
@@ -301,6 +313,8 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
         )
         pygame.mixer.music.set_volume(volume / 100)
 
+
+    # check slide volume
     def mute(self):
         if self.mute_val is False:
             self.vol_val_before = self.slider_volume.value()
@@ -322,7 +336,7 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
                 )
             )
             self.tmr0.start(round(self.length * 10))
-
+    # set  time của bài nhạc
     def setMusicTimer(self, val=None):
         if val == 'stop':
             self.tmr1.stop()
@@ -334,7 +348,7 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
     def setProgressBar(self, position=0):
         position += 1
         self.progress_bar.setValue(position)
-
+    # hiển thị time
     def musicCountDown(self):
         self.time_mus += 1
         if self.time_mus >= self.length * 100:
@@ -348,6 +362,7 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
         if self.time_mus % 100 == 0:
             self.setLabelTimeUp(self.time_mus // 100)
 
+    # tua  nhạc trên thanh progress bar
     def setPlaybackPosition(self, value):
         if self.progress_bar.isEnabled() is True:
             time = self.length / 100 * value
@@ -355,7 +370,7 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
             try:
                 pygame.mixer.music.set_pos(time)
             except pygame.error:
-                self.label_name_song.setText('codec error')
+                self.label_name_song.setText('Đã có lỗi xảy ra')
                 self.stop()
             self.setLabelTimeUp(self.time_mus // 100)
 
@@ -364,10 +379,13 @@ class Exx(QMainWindow, gui.Ui_MainWindow):
 
 
 def main():
+
+    # khởi tạo app
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
+    # set màu sắc cho High light
     palette = QPalette()
-    palette.setColor(QPalette.Highlight, QColor(200, 200, 150).lighter())
+    palette.setColor(QPalette.Highlight, QColor(213, 0, 0).lighter())
     app.setPalette(palette)
     window = Exx()
     window.show()
