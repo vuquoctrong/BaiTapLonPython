@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -97,11 +96,6 @@ class Ui_MainWindow(object):
         self.label_vol_value.setGeometry(QtCore.QRect(460, 30, 21, 21))
         self.label_vol_value.setStyleSheet("color: rgb(255, 255, 255);")
         self.label_vol_value.setObjectName("label_vol_value")
-        # self.line_5 = QtWidgets.QFrame(self.widget)
-        # self.line_5.setGeometry(QtCore.QRect(340, 19, 10, 41))
-        # self.line_5.setFrameShape(QtWidgets.QFrame.VLine)
-        # self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
-        # self.line_5.setObjectName("line_5")
         self.button_next = QtWidgets.QPushButton(self.widget)
         self.button_next.setGeometry(QtCore.QRect(270, 20, 31, 41))
         self.button_next.setStyleSheet("")
@@ -140,7 +134,6 @@ class Ui_MainWindow(object):
         self.label_total_time.raise_()
         self.slider_volume.raise_()
         self.label_vol_value.raise_()
-        # self.line_5.raise_()
         self.button_stop.raise_()
         self.button_prev.raise_()
         self.button_play.raise_()
